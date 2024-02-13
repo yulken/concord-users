@@ -1,6 +1,0 @@
-@concord_users_HostAddress = http://localhost:5286
-
-GET {{concord_users_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
