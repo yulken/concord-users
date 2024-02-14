@@ -2,7 +2,7 @@
 
 namespace concord_users.Domain.UseCases
 {
-    public interface IListUsers
+    public interface IListUsersUseCase
     {
         List<User> Execute();
     }

@@ -7,7 +7,7 @@ namespace concord_users.Infra.Config
     {
         public static void Inject(IServiceCollection services)
         {
-            services.AddScoped<IUserDataPort, UserRepository>();
+            services.AddScoped<UserRepository>();
         }
     }
 }

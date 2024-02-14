@@ -7,7 +7,9 @@ namespace concord_users.Infra.Config
     {
         public static void Inject(IServiceCollection services)
         {
-            services.AddScoped<IListUsers, ListUsers>();
+            services.AddScoped<IListUsersUseCase, ListUsersUseCase>();
+            services.AddScoped<ICreateUserUseCase, CreateUserUseCase>();
+            services.AddScoped<IFindUserUseCase, FindUserUseCase>();
         }
     }
 }

@@ -2,7 +2,6 @@ using concord_users.Infra.Config;
 using concord_users.Infra.Data;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
-using System.Runtime.CompilerServices;
 
 internal class Program
 {
@@ -15,8 +14,9 @@ internal class Program
         IServiceCollection services = builder.Services;
         services.AddDbContext<AppDbContext>(context => context.UseMySQL(connectionString));
         services.AddControllers();
-        MappersConfig.Inject(services);
         RepositoriesConfig.Inject(services);
+        MappersConfig.Inject(services);
+        AdaptersConfig.Inject(services);
         UseCasesConfig.Inject(services);
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -53,7 +53,6 @@ internal class Program
         using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
         ILogger logger = factory.CreateLogger("Program");
 
-        logger.LogInformation(connString.ToString());
         return connString.ToString();
     }
 }

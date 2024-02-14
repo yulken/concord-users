@@ -1,4 +1,4 @@
-﻿using concord_users.Infra.Mappers;
+﻿using concord_users.Mappers;
 
 namespace concord_users.Infra.Config
 {

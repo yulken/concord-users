@@ -1,26 +1,33 @@
 ﻿using AutoMapper;
-using concord_users.Domain.Entities;
-using concord_users.Domain.Ports;
 using concord_users.Infra.Data.Models;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace concord_users.Infra.Data.Repositories
 {
     public class UserRepository(
         AppDbContext appDbContext,
         IMapper mapper
-        ) : IUserDataPort
+        ) 
     {
         private readonly AppDbContext _dbContext = appDbContext;
         private readonly IMapper _mapper = mapper;
 
-        public User FindById(long id)
+        public UserModel? FindById(long id)
         {
-            return _mapper.Map<User>(_dbContext.Find<UserModel>(id));
+            return _dbContext.Find<UserModel>(id);
         }
 
-        public List<User> FindAll()
+        public List<UserModel> FindAll()
         {
-            return _mapper.Map<List<UserModel>, List<User>>(_dbContext.Users.ToList());
+            //_dbContext.Users.ToList())
+            return [.. _dbContext.Users];
+        }
+
+        public UserModel Create(UserModel userModel)
+        {
+            EntityEntry<UserModel> entry = _dbContext.Users.Add(userModel);
+            _dbContext.SaveChanges();
+            return entry.Entity;
         }
     }
 }

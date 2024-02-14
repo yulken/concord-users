@@ -3,10 +3,10 @@
 namespace concord_users.Infra.Data.Models
 {
     [Table("users")]
-    public class UserModel
+    public class UserModel : BaseModel
     {
         [Column("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
         
         [Column("uuid")]
         public string Uuid { get; set; }
@@ -25,12 +25,6 @@ namespace concord_users.Infra.Data.Models
         
         [Column("profile_picture_url")]
         public string ProfilePictureUrl { get; set; }
-
-        [Column("created_at")]
-        public DateTime CreatedAt { get; set; }
-
-        [Column("updated_at")]
-        public DateTime? UpdatedAt { get; set;}
 
         [Column("deleted_at")]
         public DateTime? DeletedAt { get; set; }
