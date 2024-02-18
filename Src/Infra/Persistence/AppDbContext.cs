@@ -1,7 +1,7 @@
-﻿using concord_users.Src.Infra.Data.Models;
+﻿using concord_users.Src.Infra.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace concord_users.Src.Infra.Data
+namespace concord_users.Src.Infra.Persistence
 {
     public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {

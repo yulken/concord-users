@@ -1,5 +1,4 @@
-﻿using concord_users.Src.Domain.Exceptions;
-using concord_users.Src.Infra.Http.Dtos;
+﻿using concord_users.Src.Infra.Http.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 

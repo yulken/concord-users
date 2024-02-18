@@ -8,6 +8,7 @@ CREATE TABLE `concord`.`users` (
     `email`  VARCHAR(60) NOT NULL,
     `password`  VARCHAR(60) NOT NULL,
     `login`  VARCHAR(60) NOT NULL,
+    `status`  VARCHAR(1) NOT NULL,
     `profile_picture_url`  VARCHAR(255) NULL,
     `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
 	`updated_at` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,

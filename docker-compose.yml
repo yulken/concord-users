@@ -11,7 +11,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: "local"
     volumes:
-      - "./Data/Migrations/:/docker-entrypoint-initdb.d"
+      - "./Src/Data/Migrations/:/docker-entrypoint-initdb.d"
     networks:
       - my_network
 networks:

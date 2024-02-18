@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using concord_users.Src.Domain.Entities;
 using concord_users.Src.Domain.Exceptions;
+using concord_users.Src.Domain.Enums;
 using concord_users.Src.Domain.Ports.Persistence;
 using concord_users.Src.Domain.UseCases.Input;
 
@@ -29,9 +30,11 @@ namespace concord_users.Src.Domain.UseCases.Impl
             }
 
             User user = _mapper.Map<User>(createUserInput);
-            user.Uuid = Guid.NewGuid().ToString();
+            user.Uuid = Guid.NewGuid();
+            user.Status = UserStatus.Active;
+
             User newUser = _userPersistence.Create(user);
-            return newUser.Uuid;
+            return newUser.Uuid.ToString();
         }
     }
 }

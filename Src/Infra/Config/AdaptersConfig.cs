@@ -1,5 +1,5 @@
 ﻿using concord_users.Src.Domain.Ports.Persistence;
-using concord_users.Src.Infra.Data.Repositories;
+using concord_users.Src.Infra.Persistence.Repositories;
 
 namespace concord_users.Src.Infra.Config
 {

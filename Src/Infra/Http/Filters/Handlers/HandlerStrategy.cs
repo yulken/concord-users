@@ -18,7 +18,8 @@ namespace concord_users.Src.Infra.Http.Filters.Handlers
             try
             {
                 return _handlers[exception.GetType()];
-            }catch (Exception)
+            }
+            catch (Exception)
             {
                 return new InternalExceptionHandler();
             }

@@ -35,13 +35,12 @@ namespace concord_users.Test.UseCases
                 "João da Silva",
                 "joao@gmail.com",
                 "12345678",
-                "joaozinho",
-                "s3://fdfdsk"
+                "joaozinho"
                 );
 
             User expectedUser = new()
             {
-                Uuid = "uuid"
+                Uuid = Guid.Parse("7f18e929-ad08-45f8-bf68-d688f1e36ac7")
             };
 
             User? capturedUser = new();
@@ -53,7 +52,7 @@ namespace concord_users.Test.UseCases
 
             Assert.Multiple(() =>
             {
-                Assert.That(result, Is.EqualTo(expectedUser.Uuid));
+                Assert.That(result, Is.EqualTo(expectedUser.Uuid.ToString()));
                 Assert.That(capturedUser.Name, Is.EqualTo("João da Silva"));
             });
 
@@ -68,13 +67,12 @@ namespace concord_users.Test.UseCases
                 "João da Silva",
                 "joao@gmail.com",
                 "12345678",
-                "joaozinho",
-                "s3://fdfdsk"
+                "joaozinho"
                 );
 
             User expectedUser = new()
             {
-                Uuid = "uuid"
+                Uuid = Guid.Parse("7f18e929-ad08-45f8-bf68-d688f1e36ac7")
             };
 
             _portMock.Setup(m => m.FindByEmailOrLogin(It.IsAny<string>(), It.IsAny<string>())).Returns(new User());

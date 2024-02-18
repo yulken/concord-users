@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace concord_users.Src.Infra.Http.Dtos
+﻿namespace concord_users.Src.Infra.Http.Dtos
 {
     public class ErrorResponse
     {
@@ -8,13 +6,15 @@ namespace concord_users.Src.Infra.Http.Dtos
         public string? Message { get; set; }
         public DateTime Timestamp { get; }
 
-        public ErrorResponse(){
+        public ErrorResponse()
+        {
             StatusCode = StatusCodes.Status500InternalServerError;
             Message = "Ocorreu um erro interno";
             Timestamp = DateTime.Now;
         }
 
-        public ErrorResponse(string message) {
+        public ErrorResponse(string message)
+        {
             Message = message;
             Timestamp = DateTime.Now;
         }

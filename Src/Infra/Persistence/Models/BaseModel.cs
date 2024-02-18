@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace concord_users.Src.Infra.Data.Models
+namespace concord_users.Src.Infra.Persistence.Models
 {
     public abstract class BaseModel
     {

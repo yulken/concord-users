@@ -4,14 +4,13 @@
         string name,
         string email,
         string password,
-        string login,
-        string profilePicture
+        string login
         )
     {
         public string Name { get; set; } = name;
         public string Email { get; set; } = email;
         public string Password { get; set; } = password;
         public string Login { get; set; } = login;
-        public string ProfilePicture { get; set; } = profilePicture;
+   
     }
 }

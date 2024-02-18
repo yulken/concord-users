@@ -13,5 +13,10 @@ namespace concord_users.Src.Domain.UseCases.Impl
         {
             return _userPersistencePort.FindById(id);
         }
+
+        public User? Execute(string uuid)
+        {
+            return _userPersistencePort.FindByUuid(uuid);
+        }
     }
 }

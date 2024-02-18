@@ -1,6 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using concord_users.Src.Domain.Enums;
+using Microsoft.OpenApi.Extensions;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace concord_users.Src.Infra.Data.Models
+namespace concord_users.Src.Infra.Persistence.Models
 {
     [Table("users")]
     public class UserModel : BaseModel
@@ -23,10 +25,17 @@ namespace concord_users.Src.Infra.Data.Models
         [Column("login")]
         public string Login { get; set; }
 
+        [Column("status")]
+        public string Status { get; set; }
+
         [Column("profile_picture_url")]
         public string ProfilePictureUrl { get; set; }
 
         [Column("deleted_at")]
         public DateTime? DeletedAt { get; set; }
+        public bool IsActive()
+        {
+            return Status == UserStatusConverter.GetShortValue(UserStatus.Active);
+        }
     }
 }

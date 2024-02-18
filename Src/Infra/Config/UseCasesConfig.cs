@@ -10,6 +10,7 @@ namespace concord_users.Src.Infra.Config
             services.AddScoped<IListUsersUseCase, ListUsersUseCase>();
             services.AddScoped<ICreateUserUseCase, CreateUserUseCase>();
             services.AddScoped<IFindUserUseCase, FindUserUseCase>();
+            services.AddScoped<IDeleteUserUseCase, DeleteUserUseCase>();
         }
     }
 }
