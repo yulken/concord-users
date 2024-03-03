@@ -1,20 +1,18 @@
 ﻿using concord_users.Src.Domain.Entities;
-using concord_users.Src.Domain.Enums;
-using concord_users.Src.Domain.Exceptions;
 using concord_users.Src.Domain.Ports.Persistence;
 
-namespace concord_users.Src.Domain.UseCases.Impl
+namespace concord_users.Src.Domain.UseCases.Users.Impl
 {
     public class DeleteUserUseCase(
         IUserPersistencePort userPersistencePort
-        ): IDeleteUserUseCase
+        ) : IDeleteUserUseCase
     {
 
         private readonly IUserPersistencePort _userPersistencePort = userPersistencePort;
         public bool Execute(string uuid)
         {
-            User? user = _userPersistencePort.FindByUuid( uuid );
-            if ( user == null )
+            User? user = _userPersistencePort.FindByUuid(uuid);
+            if (user == null)
             {
                 return false;
             }

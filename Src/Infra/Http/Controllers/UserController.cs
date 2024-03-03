@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using concord_users.Src.Domain.Entities;
-using concord_users.Src.Domain.UseCases;
 using concord_users.Src.Infra.Http.Dtos;
-using concord_users.Src.Domain.UseCases.Input;
 using System.Net.Mime;
+using concord_users.Src.Domain.UseCases.Users;
+using concord_users.Src.Domain.UseCases.Users.Input;
+using concord_users.Src.Infra.Http.Dtos.Users;
 
 namespace concord_users.Src.Infra.Http.Controllers
 {
@@ -30,31 +31,19 @@ namespace concord_users.Src.Infra.Http.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
-        public ActionResult<ListUserResponseDTO> Index()
+        public ActionResult<ListUserResponseDTO> Index([FromQuery] ListUsersRequestDTO requestDTO)
         {
-            _logger.LogInformation("Fetching users");
-            List<UserDTO> usersDTO = _mapper.Map<List<User>, List<UserDTO>>(_listUsers.Execute());
+            _logger.LogInformation("Fetching users using params: {}", requestDTO);
+
+            FindUsersInput listInput = _mapper.Map<FindUsersInput>(requestDTO);
+            Pagination pagination= _mapper.Map<Pagination>(requestDTO);
+
+            List<User> user = _listUsers.Execute(listInput, pagination);
+            List<UserDTO> usersDTO = _mapper.Map<List<User>, List<UserDTO>>(user);
             return new ListUserResponseDTO(usersDTO);
         }
 
-        [HttpGet("{id}")]
-        [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
-        public ActionResult<UserDTO?> Find(long id)
-        {
-            _logger.LogInformation("Fetching user by id {}", id);
-            User? user = _findUser.Execute(id);
-            if (user == null)
-            {
-                return NoContent();
-            }
-
-            return _mapper.Map<UserDTO>(user);
-        }
-
-        [HttpGet("{id}")]
+        [HttpGet("{uuid}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -76,6 +65,7 @@ namespace concord_users.Src.Infra.Http.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
         [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
         public ActionResult<CreateUserResponseDTO> Create(CreateUserRequestDTO createUserRequest)

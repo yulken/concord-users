@@ -7,35 +7,36 @@ namespace concord_users.Src.Infra.Persistence.Models
     [Table("users")]
     public class UserModel : BaseModel
     {
+
         [Column("id")]
-        public long Id { get; set; }
+        public required long Id { get; set; }
 
         [Column("uuid")]
-        public string Uuid { get; set; }
+        public required string Uuid { get; set; }
 
         [Column("name")]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         [Column("email")]
-        public string Email { get; set; }
+        public required string Email { get; set; }
 
         [Column("password")]
-        public string Password { get; set; }
+        public required string Password { get; set; }
 
         [Column("login")]
-        public string Login { get; set; }
+        public required string Login { get; set; }
 
         [Column("status")]
-        public string Status { get; set; }
+        public required string Status { get; set; }
 
         [Column("profile_picture_url")]
-        public string ProfilePictureUrl { get; set; }
+        public string? ProfilePictureUrl { get; set; }
 
         [Column("deleted_at")]
         public DateTime? DeletedAt { get; set; }
         public bool IsActive()
         {
-            return Status == UserStatusConverter.GetShortValue(UserStatus.Active);
+            return Status == UserStatusUtil.GetShortValue(UserStatus.Active);
         }
     }
 }

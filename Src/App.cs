@@ -15,6 +15,10 @@ internal class Program
         IServiceCollection services = builder.Services;
         services.AddDbContext<AppDbContext>(context => context.UseMySQL(connectionString));
         services.AddControllers(options => options.Filters.Add<HttpResponseExceptionFilter>());
+        //services.AddMvc().AddJsonOptions(options =>
+        //{
+        //    options.JsonSerializerOptions.
+        //})
         MappersConfig.Inject(services);
         AdaptersConfig.Inject(services);
         UseCasesConfig.Inject(services);

@@ -1,4 +1,4 @@
-﻿namespace concord_users.Src.Domain.UseCases.Input
+﻿namespace concord_users.Src.Domain.UseCases.Users.Input
 {
     public class CreateUserInput(
         string name,

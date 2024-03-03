@@ -1,4 +1,4 @@
-﻿namespace concord_users.Src.Domain.UseCases
+﻿namespace concord_users.Src.Domain.UseCases.Users
 {
     public interface IDeleteUserUseCase
     {

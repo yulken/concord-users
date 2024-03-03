@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using concord_users.Src.Domain.Entities;
-using concord_users.Src.Domain.Exceptions;
 using concord_users.Src.Domain.Enums;
+using concord_users.Src.Domain.Exceptions;
 using concord_users.Src.Domain.Ports.Persistence;
-using concord_users.Src.Domain.UseCases.Input;
+using concord_users.Src.Domain.UseCases.Users.Input;
+using static BCrypt.Net.BCrypt;
 
-namespace concord_users.Src.Domain.UseCases.Impl
+namespace concord_users.Src.Domain.UseCases.Users.Impl
 {
     public class CreateUserUseCase(
         ILogger<CreateUserUseCase> logger,
@@ -32,6 +33,7 @@ namespace concord_users.Src.Domain.UseCases.Impl
             User user = _mapper.Map<User>(createUserInput);
             user.Uuid = Guid.NewGuid();
             user.Status = UserStatus.Active;
+            user.Password = HashPassword(user.Password);
 
             User newUser = _userPersistence.Create(user);
             return newUser.Uuid.ToString();

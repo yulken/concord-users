@@ -1,4 +1,4 @@
-﻿namespace concord_users.Src.Infra.Http.Dtos
+﻿namespace concord_users.Src.Infra.Http.Dtos.Users
 {
     public class UserDTO
     {

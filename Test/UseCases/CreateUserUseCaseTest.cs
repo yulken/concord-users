@@ -1,8 +1,8 @@
 ﻿using concord_users.Src.Domain.Entities;
 using concord_users.Src.Domain.Exceptions;
 using concord_users.Src.Domain.Ports.Persistence;
-using concord_users.Src.Domain.UseCases.Impl;
-using concord_users.Src.Domain.UseCases.Input;
+using concord_users.Src.Domain.UseCases.Users.Impl;
+using concord_users.Src.Domain.UseCases.Users.Input;
 using Moq;
 using NUnit.Framework;
 
@@ -31,13 +31,7 @@ namespace concord_users.Test.UseCases
         [Test]
         public void ShouldReturnUuid_IfUserCreatedSuccessfully()
         {
-            CreateUserInput input = new(
-                "João da Silva",
-                "joao@gmail.com",
-                "12345678",
-                "joaozinho"
-                );
-
+            CreateUserInput input = SampleCreateUserInput();
             User expectedUser = new()
             {
                 Uuid = Guid.Parse("7f18e929-ad08-45f8-bf68-d688f1e36ac7")
@@ -63,13 +57,7 @@ namespace concord_users.Test.UseCases
         [Test]
         public void ShouldThrow_IfPersistencePortReturnsNull()
         {
-            CreateUserInput input = new(
-                "João da Silva",
-                "joao@gmail.com",
-                "12345678",
-                "joaozinho"
-                );
-
+            CreateUserInput input = SampleCreateUserInput();
             User expectedUser = new()
             {
                 Uuid = Guid.Parse("7f18e929-ad08-45f8-bf68-d688f1e36ac7")
@@ -79,6 +67,17 @@ namespace concord_users.Test.UseCases
 
             Assert.Throws<ConflictingDataException>(() => _useCase.Execute(input));
             _portMock.Verify(m => m.FindByEmailOrLogin("joao@gmail.com", "joaozinho"), Times.Once());
+        }
+
+        private static CreateUserInput SampleCreateUserInput()
+        {
+            return new(
+                "João da Silva",
+                "joao@gmail.com",
+                "12345678",
+                "joaozinho"
+                );
+
         }
 
 

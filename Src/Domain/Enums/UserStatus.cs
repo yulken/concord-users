@@ -1,9 +1,4 @@
-﻿using Microsoft.OpenApi.Extensions;
-using Mysqlx.Crud;
-using System;
-using System.Linq;
-
-namespace concord_users.Src.Domain.Enums
+﻿namespace concord_users.Src.Domain.Enums
 {
     public class UserStatusStruct(string name, string shortName)
     {
@@ -18,7 +13,7 @@ namespace concord_users.Src.Domain.Enums
         PendingEmail
     }
 
-    public class UserStatusConverter
+    public class UserStatusUtil
     {
         public static readonly Dictionary<UserStatus, UserStatusStruct> Dict = new()
         {

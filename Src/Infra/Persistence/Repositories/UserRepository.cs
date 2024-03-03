@@ -2,8 +2,10 @@
 using concord_users.Src.Domain.Entities;
 using concord_users.Src.Domain.Enums;
 using concord_users.Src.Domain.Ports.Persistence;
+using concord_users.Src.Domain.UseCases.Users.Input;
 using concord_users.Src.Infra.Persistence.Models;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System;
 
 namespace concord_users.Src.Infra.Persistence.Repositories
 {
@@ -17,7 +19,8 @@ namespace concord_users.Src.Infra.Persistence.Repositories
 
         public User? FindById(long id)
         {
-            UserModel? model = _dbContext.Users.SingleOrDefault(user => user.Id == id && user.IsActive());
+            UserModel? model = _dbContext.Users
+                .SingleOrDefault(user => user.Id == id && user.IsActive());
             if (model == null) { 
                 return null; 
             }
@@ -27,8 +30,9 @@ namespace concord_users.Src.Infra.Persistence.Repositories
 
         public User? FindByUuid(string uuid)
         {
-            UserModel? model = _dbContext.Users.SingleOrDefault(u => u.Uuid == uuid 
-                && u.Status == UserStatusConverter.GetShortValue(UserStatus.Active));
+            UserModel? model = _dbContext.Users
+                .SingleOrDefault(u => u.Uuid == uuid 
+                && u.Status == UserStatusUtil.GetShortValue(UserStatus.Active));
             if (model == null)
             {
                 return null;
@@ -38,8 +42,9 @@ namespace concord_users.Src.Infra.Persistence.Repositories
 
         public User? FindByEmailOrLogin(string email, string login)
         {
-            UserModel? model = _dbContext.Users.SingleOrDefault(u => (u.Email == email || u.Login == login) 
-                && u.Status == UserStatusConverter.GetShortValue(UserStatus.Active));
+            UserModel? model = _dbContext.Users
+                .SingleOrDefault(u => (u.Email == email || u.Login == login) 
+                && u.Status == UserStatusUtil.GetShortValue(UserStatus.Active));
             if (model == null)
             {
                 return null;
@@ -47,11 +52,26 @@ namespace concord_users.Src.Infra.Persistence.Repositories
             return Map(model);
         }
 
-        public List<User> FindAll()
+        public List<User> FindAll(FindUsersInput input, Pagination pagination)
         {
-            //_dbContext.Users.ToList())
-            List<UserModel> users = [.. _dbContext.Users];
-            return _mapper.Map<List<UserModel>,List<User>>(users);
+            List<UserModel> users =
+            [
+                .. _dbContext.Users
+                .Where(el => el.Status == UserStatusUtil.GetShortValue(UserStatus.Active) && 
+                ((input.Uuid == null && input.Email == null && input.Login == null) || (
+                    (input.Uuid != null && el.Uuid.Equals(input.Uuid)) || 
+                    (input.Email != null && el.Email.Contains(input.Email)) || 
+                    (input.Login != null && el.Login.Contains(input.Login)))))
+                .Skip(pagination.PageSize * pagination.PageCount)
+                .Take(pagination.PageSize)
+                
+            ];
+
+            List<UserModel> sortedUsers = (OrderByEnum.Desc.Equals(pagination.OrderBy)) 
+                ? [.. users.OrderByDescending(el => el.Id)]
+                : [.. users.OrderBy(el => el.Id)];
+
+            return _mapper.Map<List<UserModel>,List<User>>(sortedUsers);
         }
 
         public User Create(User user)
@@ -65,7 +85,7 @@ namespace concord_users.Src.Infra.Persistence.Repositories
         public User? Update(string uuid, User updatedProps)
         {
             UserModel? oldModel = _dbContext.Users.SingleOrDefault(u => u.Uuid == uuid 
-                && u.Status == UserStatusConverter.GetShortValue(UserStatus.Active));
+                && u.Status == UserStatusUtil.GetShortValue(UserStatus.Active));
             if (oldModel == null)
             {
                 return null;
@@ -74,6 +94,17 @@ namespace concord_users.Src.Infra.Persistence.Repositories
 
             _dbContext.SaveChanges();
             return Map(newModel);
+        }
+
+        public User? FindWithLoginAndPasword(string login, string password)
+        {
+            UserModel? model = _dbContext.Users.SingleOrDefault(u => u.Login == login
+               && u.Password == password);
+            if (model == null)
+            {
+                return null;
+            }
+            return Map(model);
         }
 
         private UserModel Map(User user)
@@ -88,7 +119,8 @@ namespace concord_users.Src.Infra.Persistence.Repositories
 
         private static bool IsActive(UserModel user)
         {
-            return user.Status == UserStatusConverter.GetShortValue(UserStatus.Active);
+            return user.Status == UserStatusUtil.GetShortValue(UserStatus.Active);
         }
+
     }
 }

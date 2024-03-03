@@ -1,6 +1,6 @@
-﻿using concord_users.Src.Domain.UseCases.Input;
+﻿using concord_users.Src.Domain.UseCases.Users.Input;
 
-namespace concord_users.Src.Domain.UseCases
+namespace concord_users.Src.Domain.UseCases.Users
 {
     public interface ICreateUserUseCase
     {

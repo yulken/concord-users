@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
 using concord_users.Src.Domain.Entities;
-using concord_users.Src.Domain.UseCases.Input;
-using concord_users.Src.Infra.Persistence.Models;
-using concord_users.Src.Infra.Http.Dtos;
 using concord_users.Src.Domain.Enums;
-using Microsoft.OpenApi.Extensions;
+using concord_users.Src.Domain.UseCases.Users.Input;
+using concord_users.Src.Infra.Http.Dtos.Users;
+using concord_users.Src.Infra.Persistence.Models;
 
 namespace concord_users.Src.Mappers
 {
@@ -13,18 +12,21 @@ namespace concord_users.Src.Mappers
         public UserProfile()
         {
             CreateMap<CreateUserRequestDTO, CreateUserInput>();
-            CreateMap<ListUsersRequestDTO, ListUsersInput>();
+            CreateMap<ListUsersRequestDTO, FindUsersInput>();
             CreateMap<CreateUserInput, User>();
+
+            CreateMap<ListUsersRequestDTO, Pagination>()
+                .ForMember(dest => dest.OrderBy, opt => opt.MapFrom(src => OrderByEnumUtil.Get(src.OrderBy)));
                 
             CreateMap<UserModel, User>()
                 .ForMember(dest => dest.Uuid, opt => opt.MapFrom(src => Guid.Parse(src.Uuid)))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => UserStatusConverter.ShortStringToEnum(src.Status)));
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => UserStatusUtil.ShortStringToEnum(src.Status)));
             CreateMap<User, UserModel>()
                 .ForMember(dest => dest.Uuid, opt => opt.MapFrom(src => src.Uuid.ToString()))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => UserStatusConverter.GetShortValue(src.Status)));
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => UserStatusUtil.GetShortValue(src.Status)));
             CreateMap<User, UserDTO>()
                 .ForMember(dest => dest.Uuid, opt => opt.MapFrom(src => src.Uuid.ToString()))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => UserStatusConverter.GetName(src.Status)));
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => UserStatusUtil.GetName(src.Status)));
         }
     }
 }
