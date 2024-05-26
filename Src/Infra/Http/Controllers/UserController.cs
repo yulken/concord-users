@@ -6,6 +6,7 @@ using System.Net.Mime;
 using concord_users.Src.Domain.UseCases.Users;
 using concord_users.Src.Domain.UseCases.Users.Input;
 using concord_users.Src.Infra.Http.Dtos.Users;
+using Microsoft.AspNetCore.Authorization;
 
 namespace concord_users.Src.Infra.Http.Controllers
 {
@@ -76,15 +77,18 @@ namespace concord_users.Src.Infra.Http.Controllers
         }
 
 
+        [Authorize]
         [HttpDelete("{uuid}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
-        public ActionResult<MessageResponseDTO> Delete(string uuid)
+        public ActionResult<MessageResponseDTO> Delete([FromHeader(Name = "Authorization")] string jwt, string uuid)
         {
             _logger.LogInformation("Delete user with uuid {}", uuid);
-            bool isDeleted = _deleteUserUseCase.Execute(uuid);
+            Token token = new(jwt.Split(" ")[1]);
+            DeleteUserInput input = new(uuid, token);
+            bool isDeleted = _deleteUserUseCase.Execute(input);
             if (!isDeleted)
             {
                 return NoContent();
