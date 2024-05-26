@@ -1,8 +1,14 @@
+using concord_users.Src.Infra;
 using concord_users.Src.Infra.Config;
 using concord_users.Src.Infra.Http.Filters;
 using concord_users.Src.Infra.Persistence;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MySql.Data.MySqlClient;
+using System.Text;
 
 internal class Program
 {
@@ -12,19 +18,24 @@ internal class Program
         // Add services to the container.
         string connectionString = BuildConnectionString();
 
+        using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
+        ILogger logger = factory.CreateLogger(AppConfig.AuthApp());
+
         IServiceCollection services = builder.Services;
         services.AddDbContext<AppDbContext>(context => context.UseMySQL(connectionString));
         services.AddControllers(options => options.Filters.Add<HttpResponseExceptionFilter>());
-        //services.AddMvc().AddJsonOptions(options =>
-        //{
-        //    options.JsonSerializerOptions.
-        //})
+
         MappersConfig.Inject(services);
         AdaptersConfig.Inject(services);
         UseCasesConfig.Inject(services);
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+        byte[] key = Encoding.ASCII.GetBytes(AppConfig.AuthSecret());
+        services
+            .AddAuthentication(ConfigureAuthentication)
+            .AddJwtBearer(jwtBearerOptions => ConfigureJwtBearer(jwtBearerOptions, key));
+
         WebApplication app = builder.Build();
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
@@ -46,14 +57,33 @@ internal class Program
     {
         MySqlConnectionStringBuilder connString = new()
         {
-            Server = Environment.GetEnvironmentVariable("DB_HOST"),
-            Database = Environment.GetEnvironmentVariable("DB_NAME"),
-            UserID = Environment.GetEnvironmentVariable("DB_USER"),
-            Password = Environment.GetEnvironmentVariable("DB_PASSWORD")
+            Server = AppConfig.DbServer(),
+            Database = AppConfig.DbDatabase(),
+            UserID = AppConfig.DbUsername(),
+            Password = AppConfig.DbPassword()
         };
-        using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
-        ILogger logger = factory.CreateLogger("Program");
 
         return connString.ToString();
+    }
+
+    private static void ConfigureAuthentication(AuthenticationOptions authOptions)
+    {
+        authOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        authOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }
+
+    private static void ConfigureJwtBearer(JwtBearerOptions jwtBearerOptions, byte[] key)
+    {
+        jwtBearerOptions.SaveToken = true;
+        jwtBearerOptions.ClaimsIssuer = AppConfig.AuthApp();
+        jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = false,
+            ValidateLifetime = true,
+            ValidateAudience = false,
+            ClockSkew = TimeSpan.Zero
+        };
     }
 }

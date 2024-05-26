@@ -9,7 +9,7 @@
         public ErrorResponse()
         {
             StatusCode = StatusCodes.Status500InternalServerError;
-            Message = "Ocorreu um erro interno";
+            Message = "An internal error has ocurred";
             Timestamp = DateTime.Now;
         }
 

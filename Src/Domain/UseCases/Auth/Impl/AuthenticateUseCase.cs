@@ -3,6 +3,7 @@ using concord_users.Src.Domain.Enums;
 using concord_users.Src.Domain.Exceptions;
 using concord_users.Src.Domain.Ports.Persistence;
 using concord_users.Src.Domain.UseCases.Users.Input;
+using concord_users.Src.Infra.Http.Dtos.Auth;
 using static BCrypt.Net.BCrypt;
 
 namespace concord_users.Src.Domain.UseCases.Auth.Impl
@@ -12,7 +13,7 @@ namespace concord_users.Src.Domain.UseCases.Auth.Impl
         ): IAuthenticateUseCase
     {
         private readonly IUserPersistencePort _userPersistence = userPersistence; 
-        public Token Execute(string login, string password)
+        public AuthResponseDTO Execute(string login, string password)
         {
             User user = FindUser(login);
 
@@ -20,8 +21,8 @@ namespace concord_users.Src.Domain.UseCases.Auth.Impl
             {
                 throw new ConflictingDataException("Login ou senha são invalidos");
             };
-
-            return new Token(user);
+            Token token = new(user);
+            return new AuthResponseDTO(token.JwtBearer, token.ExpirationDate);
         }
 
         private User FindUser(string login)

@@ -14,6 +14,7 @@ namespace concord_users.Src.Infra.Http.Filters.Handlers
             {
                 StatusCode = StatusCodes.Status500InternalServerError
             };
+            context.ExceptionHandled = true;
 
             return;
         }

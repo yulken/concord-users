@@ -1,30 +1,54 @@
-﻿using JWT.Algorithms;
-using JWT.Builder;
+﻿using concord_users.Src.Infra;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using System.Security.Claims;
+using System.Text;
 
 namespace concord_users.Src.Domain.Entities
 {
-    public class Token(User user)
+    public class Token
     {
-        private static readonly string _appName = "concord-users";
-        private static readonly int _expirationHours = 1;
+        public static readonly int _expirationHours = 1;
+        public readonly string JwtBearer;
+        public readonly DateTime ExpirationDate;
+        public readonly Guid Uuid;
 
-        public readonly DateTime ExpirationDate = DateTime.UtcNow.AddHours(_expirationHours);
-        private readonly User _user = user;
-
-        public string Generate()
+        public Token(User user) 
         {
-            return JwtBuilder.Create()
-                .Issuer(_appName)
-                .Subject(_user.Login)
-                .AddClaim("email", _user.Email)
-                .AddClaim("name", _user.Name)
-                .AddClaim("login", _user.Login)
-                .AddClaim("profile_picture", _user.ProfilePictureUrl)
-                .IssuedAt(DateTime.Now)
-                .ExpirationTime(ExpirationDate)
-                .WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret("secret")
-                .Encode();
+            ExpirationDate = DateTime.UtcNow.AddHours(_expirationHours);
+            Uuid = user.Uuid;
+
+            SecurityTokenDescriptor tokenDescriptor = new()
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new("sub", user.Uuid.ToString()),
+                    new(ClaimTypes.Name, user.Login),
+                    new(ClaimTypes.Email,user.Email),
+                    new(ClaimTypes.GivenName, user.Name)
+
+                }),
+                Expires = ExpirationDate,
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(AppConfig.AuthSecret())), 
+                    SecurityAlgorithms.HmacSha256Signature),
+                IssuedAt = DateTime.UtcNow,
+                Issuer = AppConfig.AuthApp()
+            };
+
+            JwtSecurityTokenHandler tokenHandler = new();
+            SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+            JwtBearer = tokenHandler.WriteToken(token);
+        }
+
+        public Token(string bearerJwt)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            JwtSecurityToken jsonToken = handler.ReadJwtToken(bearerJwt);
+            ExpirationDate = jsonToken.ValidTo;
+            Uuid = Guid.Parse(jsonToken.Subject);
+            JwtBearer = bearerJwt;
         }
     }
 }

@@ -10,6 +10,7 @@ namespace concord_users.Src.Infra.Http.Filters.Handlers
         {
             _handlers = [];
             _handlers.Add(typeof(ConflictingDataException), new ConflictingDataHandler());
+            _handlers.Add(typeof(UnauthorizedException), new UnauthorizedExceptionHandler());
         }
 
 
