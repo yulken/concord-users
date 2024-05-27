@@ -32,12 +32,20 @@ namespace concord_users.Src.Infra.Http.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType<ErrorResponse>(StatusCodes.Status500InternalServerError)]
-        public ActionResult<ListUserResponseDTO> Index([FromQuery] ListUsersRequestDTO requestDTO)
+        public ActionResult<ListUserResponseDTO> Index(
+            [FromHeader(Name = "Authorization")] string? jwt,
+            [FromQuery] ListUsersRequestDTO requestDTO
+            )
         {
             _logger.LogInformation("Fetching users using params: {}", requestDTO);
-
+            
             FindUsersInput listInput = _mapper.Map<FindUsersInput>(requestDTO);
             Pagination pagination= _mapper.Map<Pagination>(requestDTO);
+            if (jwt != null)
+            {
+                Token token = new(jwt.Split(" ")[1]);
+                listInput.ExceptUuid = token.Uuid.ToString();
+            }
 
             List<User> user = _listUsers.Execute(listInput, pagination);
             List<UserDTO> usersDTO = _mapper.Map<List<User>, List<UserDTO>>(user);

@@ -5,7 +5,6 @@ using concord_users.Src.Domain.Ports.Persistence;
 using concord_users.Src.Domain.UseCases.Users.Input;
 using concord_users.Src.Infra.Persistence.Models;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System;
 
 namespace concord_users.Src.Infra.Persistence.Repositories
 {
@@ -58,8 +57,9 @@ namespace concord_users.Src.Infra.Persistence.Repositories
             [
                 .. _dbContext.Users
                 .Where(el => el.Status == UserStatusUtil.GetShortValue(UserStatus.Active) && 
-                ((input.Uuid == null && input.Email == null && input.Login == null) || (
-                    (input.Uuid != null && el.Uuid.Equals(input.Uuid)) || 
+                ((input.ExceptUuid == null && input.Uuid == null && input.Email == null && input.Login == null) || (
+                    (input.Uuid != null && el.Uuid.Equals(input.Uuid)) ||
+                    (input.ExceptUuid != null && !el.Uuid.Equals(input.ExceptUuid)) ||
                     (input.Email != null && el.Email.Contains(input.Email)) || 
                     (input.Login != null && el.Login.Contains(input.Login)))))
                 .Skip(pagination.PageSize * pagination.PageCount)

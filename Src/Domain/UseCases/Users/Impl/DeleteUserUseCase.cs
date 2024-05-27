@@ -16,7 +16,7 @@ namespace concord_users.Src.Domain.UseCases.Users.Impl
             Token token = input.Token;
             string uuid = input.Uuid;
 
-            if ( token.Uuid.ToString() != uuid)
+            if (token.Uuid.ToString() != uuid)
             {
                 throw new UnauthorizedException("Logged user differs from user to be deleted");
             }

@@ -1,6 +1,5 @@
 ﻿using concord_users.Src.Domain.Entities;
 using concord_users.Src.Domain.Ports.Persistence;
-using concord_users.Src.Domain.UseCases.Users;
 using concord_users.Src.Domain.UseCases.Users.Input;
 
 namespace concord_users.Src.Domain.UseCases.Users.Impl
