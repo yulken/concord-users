@@ -1,21 +1,16 @@
-﻿using AutoMapper;
-using concord_users.Src.Domain.Entities;
-using concord_users.Src.Domain.Enums;
+﻿using concord_users.Src.Domain.Entities;
 using concord_users.Src.Domain.Exceptions;
 using concord_users.Src.Domain.Ports.Persistence;
 using concord_users.Src.Domain.UseCases.Users.Input;
-using static BCrypt.Net.BCrypt;
 
 namespace concord_users.Src.Domain.UseCases.Users.Impl
 {
     public class CreateUserUseCase(
         ILogger<CreateUserUseCase> logger,
-        IUserPersistencePort userPersistencePort,
-        IMapper mapper
+        IUserPersistencePort userPersistencePort
         ) : ICreateUserUseCase
     {
         private readonly ILogger<CreateUserUseCase> _logger = logger;
-        private readonly IMapper _mapper = mapper;
         private readonly IUserPersistencePort _userPersistence = userPersistencePort;
 
         public string Execute(CreateUserInput createUserInput)
@@ -26,16 +21,18 @@ namespace concord_users.Src.Domain.UseCases.Users.Impl
 
             if (foundUser != null)
             {
-                _logger.LogError("Usuário já existe na base");
-                throw new ConflictingDataException("Não foi possível registrar usuário");
+                _logger.LogError("User already exists");
+                throw new ConflictingDataException("Unable to register user");
             }
 
-            User user = _mapper.Map<User>(createUserInput);
-            user.Uuid = Guid.NewGuid();
-            user.Status = UserStatus.Active;
-            user.Password = HashPassword(user.Password);
+            User userModel = new(
+                createUserInput.Name,
+                createUserInput.Email,
+                createUserInput.Login,
+                createUserInput.Password
+            );
 
-            User newUser = _userPersistence.Create(user);
+            User newUser = _userPersistence.Create(userModel);
             return newUser.Uuid.ToString();
         }
     }

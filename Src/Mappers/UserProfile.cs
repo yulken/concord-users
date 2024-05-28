@@ -13,14 +13,10 @@ namespace concord_users.Src.Mappers
         {
             CreateMap<CreateUserRequestDTO, CreateUserInput>();
             CreateMap<ListUsersRequestDTO, FindUsersInput>();
-            CreateMap<CreateUserInput, User>();
 
             CreateMap<ListUsersRequestDTO, Pagination>()
                 .ForMember(dest => dest.OrderBy, opt => opt.MapFrom(src => OrderByEnumUtil.Get(src.OrderBy)));
                 
-            CreateMap<UserModel, User>()
-                .ForMember(dest => dest.Uuid, opt => opt.MapFrom(src => Guid.Parse(src.Uuid)))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => UserStatusUtil.ShortStringToEnum(src.Status)));
             CreateMap<User, UserModel>()
                 .ForMember(dest => dest.Uuid, opt => opt.MapFrom(src => src.Uuid.ToString()))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => UserStatusUtil.GetShortValue(src.Status)));

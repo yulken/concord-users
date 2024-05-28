@@ -17,7 +17,7 @@ namespace concord_users.Src.Domain.UseCases.Auth.Impl
         {
             User user = FindUser(login);
 
-            if(!Verify(password, user.Password))
+            if(!user.IsPasswordCorrect(password))
             {
                 throw new ConflictingDataException("Login ou senha são invalidos");
             };

@@ -5,6 +5,7 @@ using concord_users.Src.Domain.Ports.Persistence;
 using concord_users.Src.Domain.UseCases.Users.Input;
 using concord_users.Src.Infra.Persistence.Models;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Linq.Expressions;
 
 namespace concord_users.Src.Infra.Persistence.Repositories
 {
@@ -56,12 +57,7 @@ namespace concord_users.Src.Infra.Persistence.Repositories
             List<UserModel> users =
             [
                 .. _dbContext.Users
-                .Where(el => el.Status == UserStatusUtil.GetShortValue(UserStatus.Active) && 
-                ((input.ExceptUuid == null && input.Uuid == null && input.Email == null && input.Login == null) || (
-                    (input.Uuid != null && el.Uuid.Equals(input.Uuid)) ||
-                    (input.ExceptUuid != null && !el.Uuid.Equals(input.ExceptUuid)) ||
-                    (input.Email != null && el.Email.Contains(input.Email)) || 
-                    (input.Login != null && el.Login.Contains(input.Login)))))
+                .Where(FilterUsers(input))
                 .Skip(pagination.PageSize * pagination.PageCount)
                 .Take(pagination.PageSize)
                 
@@ -71,7 +67,7 @@ namespace concord_users.Src.Infra.Persistence.Repositories
                 ? [.. users.OrderByDescending(el => el.Id)]
                 : [.. users.OrderBy(el => el.Id)];
 
-            return _mapper.Map<List<UserModel>,List<User>>(sortedUsers);
+            return sortedUsers.Select(Map).ToList();
         }
 
         public User Create(User user)
@@ -112,9 +108,27 @@ namespace concord_users.Src.Infra.Persistence.Repositories
             return _mapper.Map<UserModel>(user);
         }
 
-        private User Map(UserModel user)
+        private static Expression<Func<UserModel, bool>> FilterUsers(FindUsersInput input)
         {
-            return _mapper.Map<User>(user);
+            return model => model.Status == UserStatusUtil.GetShortValue(UserStatus.Active) &&
+                ((input.ExceptUuid == null && input.Uuid == null && input.Email == null && input.Login == null) || (
+                    (input.Uuid != null && model.Uuid.Equals(input.Uuid)) ||
+                    (input.ExceptUuid != null && !model.Uuid.Equals(input.ExceptUuid)) ||
+                    (input.Email != null && model.Email.Contains(input.Email)) ||
+                    (input.Login != null && model.Login.Contains(input.Login))));
+        }
+
+        private static User Map(UserModel user)
+        {
+            return new User(
+                user.Uuid,
+                user.Name,
+                user.Email,
+                user.Login,
+                user.Password,
+                user.Status,
+                user.ProfilePictureUrl
+                );
         }
 
         private static bool IsActive(UserModel user)

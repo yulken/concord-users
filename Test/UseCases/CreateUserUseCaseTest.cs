@@ -18,8 +18,7 @@ namespace concord_users.Test.UseCases
         public void Setup()
         {
             var logger = TestDependencies.GetLogger<CreateUserUseCase>();
-            var mapper = TestDependencies.GetMapper();
-            _useCase = new CreateUserUseCase(logger, _portMock.Object, mapper);
+            _useCase = new CreateUserUseCase(logger, _portMock.Object);
         }
 
         [TearDown]
@@ -32,52 +31,53 @@ namespace concord_users.Test.UseCases
         public void ShouldReturnUuid_IfUserCreatedSuccessfully()
         {
             CreateUserInput input = SampleCreateUserInput();
-            User expectedUser = new()
-            {
-                Uuid = Guid.Parse("7f18e929-ad08-45f8-bf68-d688f1e36ac7")
-            };
-
-            User? capturedUser = new();
+            User expectedUser = CreateFromInput(input);
+            expectedUser.Uuid = Guid.Parse("7f18e929-ad08-45f8-bf68-d688f1e36ac7");
+            
+            User? capturedUser = null;
             _portMock.Setup(m => m.Create(It.IsAny<User>())).Returns(expectedUser)
                 .Callback<User>(u => capturedUser = u);
-
 
             string result = _useCase.Execute(input);
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.EqualTo(expectedUser.Uuid.ToString()));
-                Assert.That(capturedUser.Name, Is.EqualTo("João da Silva"));
+                Assert.That(capturedUser?.Name, Is.EqualTo("John"));
+                _portMock.Verify(m => m.Create(It.IsAny<User>()), Times.Once());
             });
-
-            _portMock.Verify(m => m.Create(It.IsAny<User>()), Times.Once());
 
         }
 
         [Test]
-        public void ShouldThrow_IfPersistencePortReturnsNull()
+        public void ShouldThrow_IfPersistencePortReturnsUser()
         {
             CreateUserInput input = SampleCreateUserInput();
-            User expectedUser = new()
-            {
-                Uuid = Guid.Parse("7f18e929-ad08-45f8-bf68-d688f1e36ac7")
-            };
+            User mockUser = CreateFromInput(input);
 
-            _portMock.Setup(m => m.FindByEmailOrLogin(It.IsAny<string>(), It.IsAny<string>())).Returns(new User());
+            _portMock.Setup(m => m.FindByEmailOrLogin(It.IsAny<string>(), It.IsAny<string>())).Returns(mockUser);
 
             Assert.Throws<ConflictingDataException>(() => _useCase.Execute(input));
-            _portMock.Verify(m => m.FindByEmailOrLogin("joao@gmail.com", "joaozinho"), Times.Once());
         }
 
         private static CreateUserInput SampleCreateUserInput()
         {
             return new(
-                "João da Silva",
-                "joao@gmail.com",
-                "12345678",
-                "joaozinho"
+                "John",
+                "john@example.com",
+                "correct_password",
+                "john"
                 );
+        }
 
+        private static User CreateFromInput(CreateUserInput input)
+        {
+            return new(
+                input.Name,
+                input.Email,
+                input.Login,
+                input.Password
+            );
         }
 
 

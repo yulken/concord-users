@@ -11,15 +11,6 @@
     <DockerfileContext>.</DockerfileContext>
 	<GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Src\Data\Migrations\02-ADD-FRIENDSHIP-TABLE.SQL" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Src\Data\Migrations\02-ADD-FRIENDSHIP-TABLE.sql" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
