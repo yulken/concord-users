@@ -1,10 +1,9 @@
 using concord_users.Src.Infra;
-using concord_users.Src.Infra.Config;
 using concord_users.Src.Infra.Http.Filters;
+using concord_users.Src.Infra.Injection;
 using concord_users.Src.Infra.Persistence;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MySql.Data.MySqlClient;

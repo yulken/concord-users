@@ -1,10 +1,9 @@
-﻿using concord_users.Src.Domain.Entities;
-using concord_users.Src.Infra.Http.Dtos.Auth;
+﻿using concord_users.Src.Domain.UseCases.Auth.Output;
 
 namespace concord_users.Src.Domain.UseCases.Auth
 {
     public interface IAuthenticateUseCase
     {
-        AuthResponseDTO Execute(string login, string password);
+        AuthenticateOutput Execute(string login, string password);
     }
 }

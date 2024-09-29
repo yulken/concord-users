@@ -1,4 +1,5 @@
-﻿using concord_users.Src.Domain.UseCases.Auth;
+﻿using AutoMapper;
+using concord_users.Src.Domain.UseCases.Auth;
 using concord_users.Src.Infra.Http.Dtos;
 using concord_users.Src.Infra.Http.Dtos.Auth;
 using Microsoft.AspNetCore.Authorization;
@@ -11,10 +12,12 @@ namespace concord_users.Src.Infra.Http.Controllers
     [Route("auth")]
     public class AuthController(
         ILogger<AuthController> logger,
+        IMapper mapper,
         IAuthenticateUseCase authenticateUseCase
         ) : ControllerBase
     {
         private readonly ILogger<AuthController> _logger = logger;
+        private readonly IMapper _mapper = mapper;
         private readonly IAuthenticateUseCase _authenticateUseCase = authenticateUseCase;
 
 
@@ -27,7 +30,7 @@ namespace concord_users.Src.Infra.Http.Controllers
         public ActionResult<AuthResponseDTO> Auth(AuthRequestDTO authRequest)
         {
             _logger.LogInformation("User {} attempting login", authRequest.Login);
-            return _authenticateUseCase.Execute(authRequest.Login, authRequest.Password);            
+            return _mapper.Map<AuthResponseDTO>(_authenticateUseCase.Execute(authRequest.Login, authRequest.Password));
         }
 
     }

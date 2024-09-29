@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using concord_users.Src.Domain.Entities;
 using concord_users.Src.Domain.Enums;
+using concord_users.Src.Domain.UseCases.Auth.Output;
 using concord_users.Src.Domain.UseCases.Users.Input;
+using concord_users.Src.Infra.Http.Dtos.Auth;
 using concord_users.Src.Infra.Http.Dtos.Users;
 using concord_users.Src.Infra.Persistence.Models;
 
@@ -23,6 +25,9 @@ namespace concord_users.Src.Mappers
             CreateMap<User, UserDTO>()
                 .ForMember(dest => dest.Uuid, opt => opt.MapFrom(src => src.Uuid.ToString()))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => UserStatusUtil.GetName(src.Status)));
+
+            CreateMap<AuthenticateOutput, AuthResponseDTO>();
+
         }
     }
 }

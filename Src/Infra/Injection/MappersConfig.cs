@@ -1,6 +1,6 @@
 ﻿using concord_users.Src.Mappers;
 
-namespace concord_users.Src.Infra.Config
+namespace concord_users.Src.Infra.Injection
 {
     public class MappersConfig
     {

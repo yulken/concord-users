@@ -27,6 +27,10 @@
         {
             return FetchEnvVariable("AUTH_APP");
         }
+        public static string Env()
+        {
+            return FetchEnvVariable("ASPNETCORE_ENVIRONMENT");
+        }
         private static string FetchEnvVariable(string variable)
         {
             string env = Environment.GetEnvironmentVariable(variable) 

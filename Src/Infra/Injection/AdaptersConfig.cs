@@ -1,7 +1,7 @@
 ﻿using concord_users.Src.Domain.Ports.Persistence;
 using concord_users.Src.Infra.Persistence.Repositories;
 
-namespace concord_users.Src.Infra.Config
+namespace concord_users.Src.Infra.Injection
 {
     public class AdaptersConfig
     {
