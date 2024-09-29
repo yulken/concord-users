@@ -1,5 +1,4 @@
 ﻿using concord_users.Src.Domain.Enums;
-using Microsoft.OpenApi.Extensions;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace concord_users.Src.Infra.Persistence.Models
@@ -34,6 +33,7 @@ namespace concord_users.Src.Infra.Persistence.Models
 
         [Column("deleted_at")]
         public DateTime? DeletedAt { get; set; }
+
         public bool IsActive()
         {
             return Status == UserStatusUtil.GetShortValue(UserStatus.Active);

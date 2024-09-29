@@ -1,13 +1,10 @@
 ﻿using concord_users.Src.Domain.Enums;
-using System.Collections.ObjectModel;
 using static BCrypt.Net.BCrypt;
 
 namespace concord_users.Src.Domain.Entities
 {
     public class User
     {
-        private User() { }
-
         public User(
             string name,
             string email,
@@ -26,6 +23,7 @@ namespace concord_users.Src.Domain.Entities
             Uuid = Guid.NewGuid();
             Status = UserStatus.Active;
             Password = HashPassword(plaintextPassword);
+            Validate();
         }
 
         public User(
@@ -38,13 +36,6 @@ namespace concord_users.Src.Domain.Entities
             string profilePictureUrl
             )
         {
-            ArgumentNullException.ThrowIfNull(uuid);
-            ArgumentNullException.ThrowIfNull(name);
-            ArgumentNullException.ThrowIfNull(email);
-            ArgumentNullException.ThrowIfNull(login);
-            ArgumentNullException.ThrowIfNull(encryptedPassword);
-            ArgumentNullException.ThrowIfNull(status);
-
             Name = name;
             Email = email;
             Login = login;
@@ -52,16 +43,28 @@ namespace concord_users.Src.Domain.Entities
             Status = UserStatusUtil.ShortStringToEnum(status);
             Password = encryptedPassword;
             ProfilePictureUrl = profilePictureUrl;
+            Validate();
         }
 
         public Guid Uuid { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
+
         public string Password;
         public string Login { get; set; }
         public UserStatus Status { get; set; }
         public string? ProfilePictureUrl { get; set; }
         public DateTime? DeletedAt { get; set; }
+
+        private void Validate()
+        {
+            ArgumentNullException.ThrowIfNull(Uuid);
+            ArgumentNullException.ThrowIfNull(Name);
+            ArgumentNullException.ThrowIfNull(Email);
+            ArgumentNullException.ThrowIfNull(Login);
+            ArgumentNullException.ThrowIfNull(Password);
+            ArgumentNullException.ThrowIfNull(Status);
+        }
 
         public void Activate()
         {
